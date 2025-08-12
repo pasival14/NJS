@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NJS Event Center Virtual Tour Presentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+        h1 {
+            margin: 20px 0;
+            color: #ffffff;
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+        }
+        .controls {
+            background: #1e1e1e;
+            padding: 15px;
+            display: inline-flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            max-width: 95%;
+        }
+        label {
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: none;
+            background-color: #2a2a2a;
+            color: #ffffff;
+            width: 120px;
+            text-align: center;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            border: none;
+            color: #ffffff;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            min-width: 80px;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        .iframe-wrapper {
+            width: 95%;
+            max-width: 900px;
+            height: 60vh;
+            min-height: 400px;
+            max-height: 600px;
+            overflow: hidden;
+            border-radius: 10px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .watermark-cover {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 20px;
+            background-color: #121212;
+            pointer-events: none;
+            z-index: 10;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 10px;
+        }
+        .mobile-controls {
+            display: none;
+            margin-top: 15px;
+        }
+        .mobile-controls button {
+            margin: 5px;
+            padding: 12px 20px;
+            font-size: 16px;
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            label {
+                margin-bottom: 10px;
+            }
+            input[type="text"], input[type="number"] {
+                width: 200px;
+            }
+            .iframe-wrapper {
+                height: 50vh;
+                min-height: 300px;
+            }
+            .mobile-controls {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>NJS Event Center Virtual Tour Presentation</h1>
+
+    <div class="controls">
+        <label>Embed URL: 
+            <input type="text" id="embedUrl" 
+            value="https://momento360.com/e/u/7675bdd3764d4fba92c2491376dea006?utm_campaign=embed&utm_source=other&heading=154.03&pitch=-3.54&field-of-view=71&size=medium&display-plan=true">
+        </label>
+        <label>Heading: <input type="number" id="heading" value="154.03" step="0.1"></label>
+        <label>Pitch: <input type="number" id="pitch" value="-3.54" step="0.1"></label>
+        <label>FOV: <input type="number" id="fov" value="71" step="0.1"></label>
+        <button onclick="applySettings()">Apply</button>
+    </div>
+
+    <div class="iframe-wrapper">
+        <iframe id="viewer" src="https://momento360.com/e/u/7675bdd3764d4fba92c2491376dea006?utm_campaign=embed&utm_source=other&heading=154.03&pitch=-3.54&field-of-view=71&size=medium&display-plan=true" allowfullscreen></iframe>
+        <div class="watermark-cover"></div>
+    </div>
+
+    <div class="mobile-controls">
+        <button onclick="rotateLeft()">← Rotate Left</button>
+        <button onclick="rotateRight()">Rotate Right →</button>
+        <button onclick="resetView()">Reset View</button>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('viewer');
+        let currentHeading = 154.03;
+        let currentPitch = -3.54;
+        let currentFov = 71;
+
+        function applySettings() {
+            const url = document.getElementById('embedUrl').value;
+            const heading = document.getElementById('heading').value;
+            const pitch = document.getElementById('pitch').value;
+            const fov = document.getElementById('fov').value;
+            
+            currentHeading = parseFloat(heading);
+            currentPitch = parseFloat(pitch);
+            currentFov = parseFloat(fov);
+            
+            const newUrl = `${url.split('?')[0]}?utm_campaign=embed&utm_source=other&heading=${heading}&pitch=${pitch}&field-of-view=${fov}&size=medium&display-plan=true`;
+            iframe.src = newUrl;
+        }
+
+        function rotateLeft() {
+            currentHeading -= 15;
+            document.getElementById('heading').value = currentHeading.toFixed(2);
+            applySettings();
+        }
+
+        function rotateRight() {
+            currentHeading += 15;
+            document.getElementById('heading').value = currentHeading.toFixed(2);
+            applySettings();
+        }
+
+        function resetView() {
+            currentHeading = 154.03;
+            currentPitch = -3.54;
+            currentFov = 71;
+            
+            document.getElementById('heading').value = currentHeading;
+            document.getElementById('pitch').value = currentPitch;
+            document.getElementById('fov').value = currentFov;
+            
+            applySettings();
+        }
+
+        // Initialize values
+        document.getElementById('heading').value = currentHeading;
+        document.getElementById('pitch').value = currentPitch;
+        document.getElementById('fov').value = currentFov;
+    </script>
+</body>
+</html>
